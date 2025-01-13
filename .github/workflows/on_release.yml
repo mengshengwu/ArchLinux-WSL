@@ -19,9 +19,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tarball
-    
+          
+    - name: List downloaded files
+        run: ls -alh  # 查看下载的文件
+
       - name: Generate Checksums
         run: |
+          
           for x in *.{tar.gz}; do
             sha256sum $x > ${x}.sha256
           done
