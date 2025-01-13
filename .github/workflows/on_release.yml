@@ -1,0 +1,36 @@
+name: "Release"
+
+on:
+  push:
+    tags: []
+
+jobs:
+  build:
+    name: Build 🛠️
+    uses: ./.github/workflows/run_build.yml
+
+  release:
+    needs:
+      - build
+    name: Create Release 📢
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Tarball 📥
+        uses: actions/download-artifact@v4
+        with:
+          name: tarball
+    
+      - name: Generate Checksums 🔑
+        run: |
+          for x in *.{tar.gz}; do
+            sha256sum $x > ${x}.sha256
+          done
+
+      - name: Attach to Release 📎
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            archlinux-wsl.tar.gz
+            archlinux-wsl.tar.gz.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

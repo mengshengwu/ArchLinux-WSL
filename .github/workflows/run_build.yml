@@ -1,0 +1,35 @@
+name: Build Tarball
+
+on:
+  workflow_call: {}
+
+jobs:
+  tar:
+    name: Tarball
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Arch Linux Bootstrap
+        run: |
+          VERSION=$(cat VERSION)
+          echo "Downloading Arch Linux Bootstrap ${VERSION}"
+          curl -O https://archive.archlinux.org/iso/${{ VERSION }}/archlinux-bootstrap-x86_64.tar.zst{.sig,}
+          gpg --keyserver-options auto-key-retrieve --verify archlinux-bootstrap-x86_64.tar.zst{.sig,}
+          
+      - name: Create WSL Package
+        run: |
+          mkdir -p arch-bootstrap
+          tar -I zstd -xf archlinux-bootstrap-x86_64.tar.zst -C arch-bootstrap
+          cp -r WSL/* arch-bootstrap/root.x86_64/
+          cd arch-bootstrap/root.x86_64
+          tar --numeric-owner --absolute-names -c * | gzip --best > ../../archlinux-wsl.tar.gz
+
+      - name: Upload Tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: tarball
+          path: archlinux-wsl.tar.gz

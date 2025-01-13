@@ -1,0 +1,23 @@
+name: 'Get Arch Linux Latest Version'
+description: 'Fetch the latest Arch Linux version from the ISO archive'
+
+inputs:
+  archive_url:
+    description: 'The URL to fetch the latest version from'
+    required: true
+    default: 'https://archive.archlinux.org/iso/'
+
+outputs:
+  version:
+    description: 'The generated version number'
+    value: ${{ steps.version.outputs.version }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Fetch latest version
+      id: version
+      run: |
+        LATEST_VERSION=$(curl -s ${{ inputs.archive_url }} | grep -oP 'href="\K[0-9]{4}\.[0-9]{2}\.[0-9]{2}.*?/' | sort -V | tail -n 1 | sed 's/\/$//')
+        echo "Latest Arch Linux version: $LATEST_VERSION"
+        echo "version=$LATEST_VERSION" >> $GITHUB_ENV
