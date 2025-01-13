@@ -22,6 +22,8 @@ jobs:
           archive_url: 'https://archive.archlinux.org/iso/'
 
       - name: Check And Update VERSION
+        permissions:
+          contents: write
         run: |
           echo "Latest Arch Linux version is ${{ steps.get_arch_version.outputs.version }}"
           current_version=$(cat VERSION)
