@@ -1,0 +1,53 @@
+name: Update the Arch Linux version
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get Arch Linux Latest Version
+        id: get_arch_version
+        uses: ./.github/actions/get-arch-version
+        with:
+          archive_url: 'https://archive.archlinux.org/iso/'
+
+      - name: Check And Update VERSION
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Latest Arch Linux version is ${{ steps.get_arch_version.outputs.version }}"
+          current_version=$(cat VERSION)
+          new_version="${{ steps.get_arch_version.outputs.version }}"
+          
+          if [ "$current_version" != "$new_version" ]; then
+            echo "Version mismatch, triggering release"
+            
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            
+            pr_branch="update-version-to-$new_version"
+            git switch --create $pr_branch
+
+            echo "$new_version" > VERSION
+            git add VERSION
+            git commit -m "chore: bump version to $new_version"
+            git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "$pr_branch"
+            
+            pr_title="chore: bump version to $new_version"
+            pr_body="This PR updates the version to $new_version."
+            gh pr create --title "$pr_title" --body "$pr_body" --base main --head "$pr_branch"
+          else
+            echo "Version match, no action required"
+          fi
