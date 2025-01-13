@@ -24,15 +24,45 @@ jobs:
       - name: Check And Update VERSION
         run: |
           echo "Latest Arch Linux version is ${{ steps.get_arch_version.outputs.version }}"
-          if [ "$(cat VERSION)" != "${{ steps.get_arch_version.outputs.version }}" ]; then
+          current_version=$(cat VERSION)
+          new_version="${{ steps.get_arch_version.outputs.version }}"
+          
+          # 如果版本号不匹配
+          if [ "$current_version" != "$new_version" ]; then
             echo "Version mismatch, triggering release"
+            
+            # 配置 git 用户
             git config --global user.name "github-actions[bot]"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
-            echo "${{ steps.get_arch_version.outputs.version }}" > VERSION
+            
+            # 更新 VERSION 文件
+            echo "$new_version" > VERSION
             git add VERSION
-            git commit -m "chore: bump version to ${{ steps.get_arch_version.outputs.version }}"
+            git commit -m "chore: bump version to $new_version"
+            
+            # 创建版本号标签
+            git tag -a "v$new_version" -m "Release version $new_version"
+            
+            # 获取当前分支
             git_current_branch=$(git rev-parse --abbrev-ref HEAD)
+            
+            # 推送更新到当前分支
             git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "$git_current_branch"
+            
+            # 推送标签到远程仓库
+            git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "v$new_version"
+
+            # 创建一个 PR 用于更新版本
+            pr_title="chore: bump version to $new_version"
+            pr_body="This PR updates the version to $new_version."
+            pr_branch="update-version-to-$new_version"
+            
+            # 创建新分支并推送
+            git checkout -b "$pr_branch"
+            git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "$pr_branch"
+            
+            # 使用 GitHub CLI 创建 PR
+            gh pr create --title "$pr_title" --body "$pr_body" --base dev --head "$pr_branch"
           else
             echo "Version match, no action required"
           fi
