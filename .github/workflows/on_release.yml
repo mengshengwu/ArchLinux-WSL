@@ -25,11 +25,8 @@ jobs:
 
       - name: Generate Checksums
         run: |
+          sha256sum archlinux-wsl.tar.gz > archlinux-wsl.tar.gz.sha256
           
-          for x in *.{tar.gz}; do
-            sha256sum $x > ${x}.sha256
-          done
-
       - name: Attach to Release
         uses: softprops/action-gh-release@v2
         with:
