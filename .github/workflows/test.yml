@@ -1,9 +1,14 @@
 name: Manual Trigger Workflow
 
 on:
-  workflow_dispatch:
-    inputs:
-      message:
-        description: 'Custom message'
-        required: true
-        default: 'Hello World'
+  workflow_dispatch
+
+jobs:
+  hello:
+    name: hello
+    runs-on: ubuntu-latest
+    steps:
+    - name: hello
+      run: |
+        echo hello
+
