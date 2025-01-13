@@ -27,7 +27,7 @@ jobs:
           tar -I zstd -xf archlinux-bootstrap-x86_64.tar.zst -C arch-bootstrap
           cp -r WSL/* arch-bootstrap/root.x86_64/
           cd arch-bootstrap/root.x86_64
-          tar --numeric-owner --absolute-names -c * | gzip --fast > ../../archlinux-wsl.tar.gz
+          tar --numeric-owner --absolute-names -c * | gzip --best > ../../archlinux-wsl.tar.gz
 
       - name: Upload Tarball
         uses: actions/upload-artifact@v4
