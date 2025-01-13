@@ -20,9 +20,6 @@ jobs:
         with:
           name: tarball
           
-      - name: List downloaded files
-        run: ls -alh
-
       - name: Generate Checksums
         run: |
           sha256sum archlinux-wsl.tar.gz > archlinux-wsl.tar.gz.sha256
