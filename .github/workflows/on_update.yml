@@ -19,17 +19,18 @@ jobs:
         with:
           archive_url: 'https://archive.archlinux.org/iso/'
 
-      - name: Compare Versions
+      - name: Check And Update VERSION
         run: |
           echo "Latest Arch Linux version is ${{ steps.get_arch_version.outputs.version }}"
           if [ "$(cat VERSION)" != "${{ steps.get_arch_version.outputs.version }}" ]; then
             echo "Version mismatch, triggering release"
-            echo "${{ steps.get_arch_version.outputs.version }}" > VERSION
             git config --global user.name "github-actions[bot]"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            echo "${{ steps.get_arch_version.outputs.version }}" > VERSION
             git add VERSION
             git commit -m "chore: bump version to ${{ steps.get_arch_version.outputs.version }}"
-            git push
+            git_current_branch=$(git rev-parse --abbrev-ref HEAD)
+            git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "$git_current_branch"
           else
             echo "Version match, no action required"
           fi

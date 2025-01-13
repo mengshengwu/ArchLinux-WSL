@@ -20,4 +20,4 @@ runs:
       run: |
         LATEST_VERSION=$(curl -s ${{ inputs.archive_url }} | grep -oP 'href="\K[0-9]{4}\.[0-9]{2}\.[0-9]{2}.*?/' | sort -V | tail -n 1 | sed 's/\/$//')
         echo "Latest Arch Linux version: $LATEST_VERSION"
-        echo "version=$LATEST_VERSION" >> $GITHUB_ENV
+        echo "::set-output name=version::$LATEST_VERSION"

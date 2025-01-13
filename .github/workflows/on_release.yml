@@ -6,27 +6,27 @@ on:
 
 jobs:
   build:
-    name: Build 🛠️
+    name: Build
     uses: ./.github/workflows/run_build.yml
 
   release:
     needs:
       - build
-    name: Create Release 📢
+    name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Download Tarball 📥
+      - name: Download Tarball
         uses: actions/download-artifact@v4
         with:
           name: tarball
     
-      - name: Generate Checksums 🔑
+      - name: Generate Checksums
         run: |
           for x in *.{tar.gz}; do
             sha256sum $x > ${x}.sha256
           done
 
-      - name: Attach to Release 📎
+      - name: Attach to Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
