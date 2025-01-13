@@ -20,8 +20,8 @@ jobs:
         with:
           name: tarball
           
-    - name: List downloaded files
-        run: ls -alh  # 查看下载的文件
+      - name: List downloaded files
+        run: ls -alh
 
       - name: Generate Checksums
         run: |
