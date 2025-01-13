@@ -17,8 +17,8 @@ jobs:
         run: |
           VERSION=$(cat VERSION)
           echo "Downloading Arch Linux Bootstrap ${VERSION}"
-          curl -O https://archive.archlinux.org/iso/${{ VERSION }}/archlinux-bootstrap-x86_64.tar.zst{.sig,}
-          gpg --keyserver-options auto-key-retrieve --verify archlinux-bootstrap-x86_64.tar.zst{.sig,}
+          curl -O https://archive.archlinux.org/iso/${VERSION}/archlinux-bootstrap-x86_64.tar.zst{.sig,}
+          gpg --batch --keyserver-options auto-key-retrieve --verify archlinux-bootstrap-x86_64.tar.zst{.sig,}
           
       - name: Create WSL Package
         run: |
