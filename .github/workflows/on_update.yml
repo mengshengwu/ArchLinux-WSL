@@ -24,6 +24,8 @@ jobs:
           archive_url: 'https://archive.archlinux.org/iso/'
 
       - name: Check And Update VERSION
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Latest Arch Linux version is ${{ steps.get_arch_version.outputs.version }}"
           current_version=$(cat VERSION)
