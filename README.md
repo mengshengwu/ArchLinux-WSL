@@ -2,8 +2,16 @@
   ArchLinux-WSL<br />
 </h1>
 
-Arch Linux for the Windows Subsystem for Linux (WSL) based on the official root filesystem without any modifications.
+> ⚠️ **This project is no longer maintained!**  
+> There is now an [official Arch Linux for WSL](https://archlinux.org/download/#wsl) release.  
+>  
+> 👉 [Go to the official Arch Linux WSL page](https://archlinux.org/download/#wsl)
 
+---
+
+~~Arch Linux for the Windows Subsystem for Linux (WSL) based on the official root filesystem without any modifications.~~
+
+<!--
 ## Quick Start
 
 1. Enable WSL if you haven't done already:
@@ -33,3 +41,4 @@ For more detailed instructions on using Arch Linux, [refer to the documentation]
 ## License
 
 Apache License, Version 2.0. See `LICENSE` or <http://www.apache.org/licenses/LICENSE-2.0.html> for details.
+-->
